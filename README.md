@@ -1,19 +1,11 @@
-# hamburguervue
+# Hamburger vue
 
-## Project setup
-```
-npm install
-```
+Projeto de pedidos de hamburger feito com Vue, Vue-router e Javascript
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+## Home da página:
 
-### Compiles and minifies for production
-```
-npm run build
-```
+![Banner e HomePage](markdown/home-hamburger.png)
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## Formulário para criação de pedidos:
+
+![Burger Formulário](markdown/form-hamburguer.png)
