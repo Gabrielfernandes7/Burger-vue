@@ -1,5 +1,6 @@
 <template>
     <div>
+        <MessageVue :msg="msg" v-show="msg"/>
         <form id="burger-form" @submit.prevent="createBurger">
             <div class="input-container">
                 <label for="nome">Nome do cliente: </label>
@@ -23,9 +24,9 @@
             </div>
 
             <div id="opcionais-container" class="input-container">
-                <label for="opcionais" id="opcionais-title">Selecione os opcionais: </label>
+                <label for="opcional" id="opcionais-title">Selecione os opcionais: </label>
                 <div class="checkbox-container" v-for="opcional in opcionaisData" :key="opcional.id" >
-                    <input type="checkbox" name="opcionais" id="opcionais" v-model="opcionais" :value="opcional.tipo">
+                    <input type="checkbox" name="opcionais" id="opcionais" v-model="opcional" :value="opcional.tipo">
                     <span>{{ opcional.tipo }}</span>
                 </div>
             </div>
@@ -110,6 +111,8 @@ input, select{
 </style>
 
 <script>
+import MessageVue from './Message.vue';
+
 export default {
     name: "BurgerForm",
     data() {
@@ -157,8 +160,12 @@ export default {
             const res = await req.json();
 
             // Colocar uma mensagem no sistema
+            this.msg = `Pedido Nº ${res.id} realizado com sucesso`
 
-            
+            // limpar msg
+            setTimeout(() => {
+                this.msg = ""
+            }, 3000);
 
             // Limpar os campos
             this.nome = "";
@@ -170,6 +177,9 @@ export default {
     mounted() {
         // instância 
         this.getIngredientes()
+    },
+    components: {
+        MessageVue
     }
 }
 </script>
