@@ -14,6 +14,6 @@ Projeto de pedidos de hamburger feito com Vue, Vue-router e Javascript
 
 ![Pedido feito no BurgerForm](markdown/register.png)
 
-## Pedido registrado no Dashboard
+## Pedido registrado no Dashboard Burger
 
 ![Pedido registrado](markdown/register-successful.png)
