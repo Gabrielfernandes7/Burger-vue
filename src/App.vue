@@ -1,12 +1,16 @@
 <template>
-  <NavbarVue :logo="logo_src" :alt="app_name"/>
-  <router-view/>
-  <FooterVue />
+  <div>
+    <div>
+      <NavbarVue :logo="logo_src" :alt="app_name"/>
+    </div>
+    <div>
+      <router-view/>
+    </div>
+    <div>
+      <FooterVue />
+    </div>
+  </div>
 </template>
-
-<style>
-
-</style>
 
 <script>
 import NavbarVue from './components/Navbar.vue';

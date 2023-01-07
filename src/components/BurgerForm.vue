@@ -1,97 +1,161 @@
 <template>
+    <Message :msg="msg" v-show="msg" />
     <div>
-        <MessageVue :msg="msg" v-show="msg"/>
-        <form id="burger-form" @submit.prevent="createBurger">
+        <form id="burger-form" method="POST" @submit="createBurger">
             <div class="input-container">
-                <label for="nome">Nome do cliente: </label>
-                <input type="text" id="nome" name="name" v-model="nome" placeholder="Por favor, digite seu nome">
+                <label for="nome">Nome do cliente:</label>
+                <input type="text" id="nome" name="nome" v-model="nome" placeholder="Digite o seu nome">
             </div>
-
             <div class="input-container">
-                <label for="pao">Escolha o pão: </label>
+                <label for="pao">Escolha o pão:</label>
                 <select name="pao" id="pao" v-model="pao">
-                    <option value=""> Selecione seu pão: </option>
+                    <option value="">Selecione o seu pão</option>
                     <option v-for="pao in paes" :key="pao.id" :value="pao.tipo">{{ pao.tipo }}</option>
                 </select>
             </div>
-
             <div class="input-container">
-                <label for="carne">Escolha a carne do seu Burguer: </label>
+                <label for="carne">Escolha a carne do seu Burger:</label>
                 <select name="carne" id="carne" v-model="carne">
-                    <option value=""> Selecione seu tipo de carne: </option>
+                    <option value="">Selecione o tipo de carne</option>
                     <option v-for="carne in carnes" :key="carne.id" :value="carne.tipo">{{ carne.tipo }}</option>
                 </select>
             </div>
-
             <div id="opcionais-container" class="input-container">
-                <label for="opcional" id="opcionais-title">Selecione os opcionais: </label>
-                <div class="checkbox-container" v-for="opcional in opcionaisData" :key="opcional.id" >
-                    <input type="checkbox" name="opcionais" id="opcionais" v-model="opcional" :value="opcional.tipo">
+                <label id="opcionais-title" for="opcionais">Selecione os opcionais:</label>
+                <div class="checkbox-container" v-for="opcional in opcionaisdata" :key="opcional.id">
+                    <input type="checkbox" name="opcionais" v-model="opcionais" :value="opcional.tipo">
                     <span>{{ opcional.tipo }}</span>
                 </div>
             </div>
-
             <div class="input-container">
-                <input type="submit" class="submit-btn" value="Criar meu Burger">
+                <input class="submit-btn" type="submit" value="Criar meu Burger!">
             </div>
-            
         </form>
     </div>
-    
 </template>
 
+<script>
+import Message from './Message'
+export default {
+    name: "BurgerForm",
+    data() {
+        return {
+            paes: null,
+            carnes: null,
+            opcionaisdata: null,
+            nome: null,
+            pao: null,
+            carne: null,
+            opcionais: [],
+            status: "Solicitado",
+            msg: null
+        }
+    },
+    methods: {
+        async getIngredientes() {
+            const req = await fetch('http://localhost:3000/ingredientes');
+            const data = await req.json();
+            this.paes = data.paes;
+            this.carnes = data.carnes;
+            this.opcionaisdata = data.opcionais;
+        },
+        async createBurger(e) {
+            e.preventDefault();
+
+            const data = {
+                nome: this.nome,
+                carne: this.carne,
+                pao: this.pao,
+                opcionais: Array.from(this.opcionais),
+                status: "Solicitado"
+            }
+            const dataJson = JSON.stringify(data);
+
+            const req = await fetch("http://localhost:3000/burgers", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: dataJson
+            });
+
+            const res = await req.json()
+            console.log(res)
+
+            this.msg = `Pedido realizado com sucesso!`
+
+            // clear message
+            setTimeout(() => this.msg = "", 3000);
+            
+            // limpar campos
+            this.nome = ""
+            this.carne = ""
+            this.pao = ""
+            this.opcionais = []
+
+        }
+    },
+    mounted() {
+        this.getIngredientes()
+    },
+    components: {
+        Message
+    }
+}
+</script>
+
 <style scoped>
-#burger-form{
-    width: 400px;
+#burger-form {
+    max-width: 400px;
     margin: 0 auto;
 }
 
-.input-container{
+.input-container {
     display: flex;
     flex-direction: column;
     margin-bottom: 20px;
 }
 
-label{
+label {
     font-weight: bold;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     color: #222;
     padding: 5px 10px;
-    border-left: 5px solid #fcba03;
     border-radius: 14px;
+    border-left: 4px solid #fcba03;
 }
 
-input, select{
+input,
+select {
     padding: 5px 10px;
     width: 300px;
 }
 
-#opcionais-container{
+#opcionais-container {
     flex-direction: row;
     flex-wrap: wrap;
 }
 
-#opcionais-title{
+#opcionais-title {
     width: 100%;
 }
 
-.checkbox-container{
+.checkbox-container {
     display: flex;
     align-items: flex-start;
     width: 50%;
     margin-bottom: 20px;
 }
 
-.checkbox-container span, .checkbox-container input{
+.checkbox-container span,
+.checkbox-container input {
     width: auto;
 }
 
-.checkbox-container span{
+.checkbox-container span {
     margin-left: 6px;
     font-weight: bold;
 }
 
-.submit-btn{
+.submit-btn {
     background-color: #222;
     color: #fcba03;
     font-weight: bold;
@@ -103,83 +167,8 @@ input, select{
     transition: .5s;
 }
 
-.submit-btn:hover{
+.submit-btn:hover {
     background-color: transparent;
     color: #222;
 }
-
 </style>
-
-<script>
-import MessageVue from './Message.vue';
-
-export default {
-    name: "BurgerForm",
-    data() {
-        return {
-            paes: null,
-            carnes: null,
-            opcionaisData: null,
-            nome: null,
-            pao: null,
-            carne: null,
-            opcional: [],
-            msg: null
-        }
-    },
-    methods: {
-        async getIngredientes() {
-            const req = await fetch("http://localhost:3000/ingredientes/");
-            const data = await req.json();
-
-            this.paes = data.paes;
-            this.carnes = data.carnes;
-            this.opcionaisData = data.opcionais;
-        },
-
-        async createBurger(e) {
-            e.preventDefault();
-            console.log("Criou o hamburguer");
-
-            const data = {
-                nome: this.nome,
-                carne: this.carne,
-                pao: this.pao,
-                opcional: Array.from(this.opcional),
-                status: "Solicitado"
-            };
-
-            const dataJson = JSON.stringify(data);
-
-            const req = await fetch("http://localhost:3000/burgers", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: dataJson
-            });
-
-            const res = await req.json();
-
-            // Colocar uma mensagem no sistema
-            this.msg = `Pedido Nº ${res.id} realizado com sucesso`
-
-            // limpar msg
-            setTimeout(() => {
-                this.msg = ""
-            }, 3000);
-
-            // Limpar os campos
-            this.nome = "";
-            this.carne = "";
-            this.pao = "";
-            this.opcional = "";
-        }
-    },
-    mounted() {
-        // instância 
-        this.getIngredientes()
-    },
-    components: {
-        MessageVue
-    }
-}
-</script>
